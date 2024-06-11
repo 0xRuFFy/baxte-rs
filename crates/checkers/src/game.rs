@@ -9,7 +9,7 @@ pub struct Checkers {
 impl Checkers {
     pub fn new(player_1: Box<dyn Player>, player_2: Box<dyn Player>) -> Self {
         Self {
-            board: Board::new(),
+            board: Board::default(),
             players: [player_1, player_2],
             current_player: 0,
         }

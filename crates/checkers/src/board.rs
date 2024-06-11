@@ -1,5 +1,7 @@
-use crate::piece::{Piece, PieceColor};
 use std::collections::HashMap;
+use std::fmt::{Display, Formatter};
+
+use crate::piece::{Piece, PieceColor};
 
 const WHITE_DEFAULT_START: u64 =
     0b00000000_00000000_00000000_00000000_00000000_10101010_01010101_10101010;
@@ -20,6 +22,7 @@ impl Move {
     }
 }
 
+#[derive(Debug)]
 pub struct BitBoard {
     white: u64,
     black: u64,
@@ -121,17 +124,37 @@ impl BitBoard {
     }
 }
 
+impl Default for BitBoard {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Display for BitBoard {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        for y in 0..8 {
+            for x in 0..8 {
+                let piece = self.get_piece(x, y);
+
+                match piece {
+                    Some(piece) => write!(f, "{}", piece)?,
+                    None => write!(f, ".")?,
+                }
+            }
+
+            writeln!(f)?;
+        }
+
+        Ok(())
+    }
+}
+
+#[derive(Default, Debug)]
 pub struct Board {
     bit_board: BitBoard,
 }
 
 impl Board {
-    pub fn new() -> Self {
-        Self {
-            bit_board: BitBoard::new(),
-        }
-    }
-
     fn get_valid_moves_for(&self, x: usize, y: usize) -> Vec<Move> {
         unimplemented!("Board::get_valid_moves_for")
     }
@@ -159,5 +182,11 @@ impl Board {
 
     pub fn backend(&self) -> &BitBoard {
         &self.bit_board
+    }
+}
+
+impl Display for Board {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.bit_board)
     }
 }

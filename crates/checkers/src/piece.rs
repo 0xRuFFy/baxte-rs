@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum PieceColor {
     White,
@@ -41,5 +43,16 @@ impl Piece {
 
     pub fn color(&self) -> PieceColor {
         self.color
+    }
+}
+
+impl Display for Piece {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match (self.color, self.piece_type) {
+            (PieceColor::White, PieceType::Man) => 'w',
+            (PieceColor::Black, PieceType::Man) => 'b',
+            (PieceColor::White, PieceType::King) => 'W',
+            (PieceColor::Black, PieceType::King) => 'B',
+        })
     }
 }
