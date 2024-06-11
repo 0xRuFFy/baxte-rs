@@ -20,7 +20,7 @@ impl Move {
     }
 }
 
-struct BitBoard {
+pub struct BitBoard {
     white: u64,
     black: u64,
     kings: u64,
@@ -35,9 +35,25 @@ impl BitBoard {
         }
     }
 
+    pub fn get_color_board(&self, color: PieceColor) -> u64 {
+        match color {
+            PieceColor::White => self.white,
+            PieceColor::Black => self.black,
+        }
+    }
+
+    pub fn get_kings(&self) -> u64 {
+        self.kings
+    }
+
     #[inline]
     fn coord_to_index(x: usize, y: usize) -> usize {
         x + y * 8
+    }
+
+    #[inline]
+    fn index_to_coord(index: usize) -> (usize, usize) {
+        (index % 8, index / 8)
     }
 
     #[inline]
@@ -97,6 +113,12 @@ impl BitBoard {
 
         self.white & mask == 0 && self.black & mask == 0
     }
+
+    pub fn is_king(&self, x: usize, y: usize) -> bool {
+        let mask = Self::mask(x, y);
+
+        self.kings & mask != 0
+    }
 }
 
 pub struct Board {
@@ -110,11 +132,32 @@ impl Board {
         }
     }
 
+    fn get_valid_moves_for(&self, x: usize, y: usize) -> Vec<Move> {
+        unimplemented!("Board::get_valid_moves_for")
+    }
+
     pub fn get_valid_moves(&self, color: PieceColor) -> HashMap<(usize, usize), Vec<Move>> {
-        unimplemented!("Board::get_valid_moves")
+        let mut color_board = self.bit_board.get_color_board(color);
+        let mut moves = HashMap::new();
+
+        while color_board != 0 {
+            let piece_index = color_board.trailing_zeros() as usize;
+            let (x, y) = BitBoard::index_to_coord(piece_index);
+
+            let piece_moves = self.get_valid_moves_for(x, y);
+            moves.insert((x, y), piece_moves);
+
+            color_board &= !(1 << piece_index);
+        }
+
+        moves
     }
 
     pub fn apply_move(&mut self, mv: Move) {
         unimplemented!("Board::apply_move")
+    }
+
+    pub fn backend(&self) -> &BitBoard {
+        &self.bit_board
     }
 }
