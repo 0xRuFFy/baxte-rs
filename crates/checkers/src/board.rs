@@ -1,4 +1,5 @@
 use crate::piece::{Piece, PieceColor};
+use std::collections::HashMap;
 
 const WHITE_DEFAULT_START: u64 =
     0b00000000_00000000_00000000_00000000_00000000_10101010_01010101_10101010;
@@ -6,19 +7,15 @@ const BLACK_DEFAULT_START: u64 =
     0b01010101_10101010_01010101_10101010_00000000_00000000_00000000_00000000;
 
 pub struct Move {
-    from_x: usize,
-    from_y: usize,
-    to_x: usize,
-    to_y: usize,
+    from: usize,
+    to: usize,
 }
 
 impl Move {
     pub fn new(from_x: usize, from_y: usize, to_x: usize, to_y: usize) -> Self {
         Self {
-            from_x,
-            from_y,
-            to_x,
-            to_y,
+            from: BitBoard::coord_to_index(from_x, from_y),
+            to: BitBoard::coord_to_index(to_x, to_y),
         }
     }
 }
@@ -113,7 +110,7 @@ impl Board {
         }
     }
 
-    pub fn get_valid_moves(&self, color: PieceColor) -> Vec<Move> {
+    pub fn get_valid_moves(&self, color: PieceColor) -> HashMap<(usize, usize), Vec<Move>> {
         unimplemented!("Board::get_valid_moves")
     }
 
